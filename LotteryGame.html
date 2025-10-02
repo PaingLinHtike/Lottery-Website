@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuckyDraw Lottery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            min-width: 150px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #00b894, #00a085);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .rules-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .rules-list li {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .rules-list li:before {
+            content: "•";
+            color: #ff6b6b;
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .result-display {
+            text-align: center;
+            padding: 30px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .win {
+            color: #00ff88;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .lose {
+            color: #ff4757;
+        }
+
+        .balance-display {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .number-display {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: #ffd700;
+        }
+
+        .buttons-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .error {
+            background: rgba(255, 71, 87, 0.3);
+            color: #ff4757;
+        }
+
+        .success {
+            background: rgba(0, 255, 136, 0.3);
+            color: #00ff88;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎰 LuckyDraw Lottery</h1>
+            <p>Test your luck and win big!</p>
+        </header>
+
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <div class="game-container">
+                <h2>Welcome to LuckyDraw!</h2>
+                <p style="margin: 20px 0; text-align: center;">Choose an option to get started:</p>
+                <div class="buttons-group">
+                    <button id="showRulesBtn" class="btn btn-secondary">📖 Read Rules</button>
+                    <button id="playGameBtn" class="btn">🎮 Play Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rules Screen -->
+        <div id="rulesScreen" class="screen">
+            <div class="game-container">
+                <h2>Game Rules</h2>
+                <ul class="rules-list">
+                    <li>Age must be older than 18.</li>
+                    <li>Top-up money must be at least 5000.</li>
+                    <li>Each play costs at least 1000.</li>
+                    <li>Win 10x your bet if your lucky number matches the system number!</li>
+                </ul>
+                <div class="buttons-group">
+                    <button id="backToWelcomeBtn" class="btn btn-secondary">⬅️ Back to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Screen -->
+        <div id="registerScreen" class="screen">
+            <div class="game-container">
+                <h2>Create Your Account</h2>
+                <div id="registerMessage" class="message" style="display: none;"></div>
+                <div class="form-group">
+                    <label for="username">Name:</label>
+                    <input type="text" id="username" placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" placeholder="Enter your age">
+                </div>
+                <div class="buttons-group">
+                    <button id="registerBtn" class="btn">✅ Register & Continue</button>
+                    <button id="backToWelcomeFromRegisterBtn" class="btn btn-secondary">⬅️ Back to Menu</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playing Screen -->
+        <div id="playingScreen" class="screen">
+            <div class="game-container">
+                <div id="topUpSection">
+                    <h2>Welcome, <span id="displayName"></span>!</h2>
+                    <p>Please top up your account to start playing.</p>
+                    <div class="form-group">
+                        <label for="topUpAmount">Top-up Amount (min 5000):</label>
+                        <input type="number" id="topUpAmount" placeholder="Enter amount">
+                    </div>
+                    <button id="topUpBtn" class="btn">💰 Top Up Account</button>
+                </div>
+
+                <div id="betSection" style="display: none;">
+                    <div class="balance-display">
+                        Your Balance: $<span id="balanceDisplay">0</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="luckyNumber">Lucky Number (10-99):</label>
+                        <input type="number" id="luckyNumber" min="10" max="99" placeholder="Enter your lucky number">
+                    </div>
+                    <div class="form-group">
+                        <label for="betAmount">Bet Amount (min 1000):</label>
+                        <input type="number" id="betAmount" min="1000" placeholder="Enter your bet amount">
+                    </div>
+                    <div class="buttons-group">
+                        <button id="playBtn" class="btn">🎲 Spin the Wheel</button>
+                        <button id="quitGameBtn" class="btn btn-secondary">🚪 Quit Game</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="resultScreen" class="screen">
+            <div class="game-container">
+                <div class="result-display">
+                    <div>System Number is:</div>
+                    <div class="number-display" id="systemNumberDisplay">00</div>
+                </div>
+                <div id="resultMessage" class="message"></div>
+                <div class="balance-display">
+                    Your Balance: $<span id="finalBalanceDisplay">0</span>
+                </div>
+                <div class="buttons-group" id="resultButtons">
+                    <button id="playAgainBtn" class="btn">🔄 Play Again</button>
+                    <button id="quitFromResultBtn" class="btn btn-secondary">🚪 Quit Game</button>
+                </div>
+                <div id="insufficientBalanceBtn" class="buttons-group" style="display: none;">
+                    <button id="quitInsufficientBtn" class="btn">❌ Not Enough Balance</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen">
+            <div class="game-container">
+                <h2>Game Over</h2>
+                <div class="result-display">
+                    Thanks for playing!<br>
+                    Final Balance: $<span id="gameOverBalance">0</span>
+                </div>
+                <div class="buttons-group">
+                    <button id="playAgainFromGameOverBtn" class="btn">🎮 Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 LuckyDraw. Play responsibly. Must be 18+ to play.</p>
+    </footer>
+
+    <script>
+        // Game state variables
+        let gameState = 'welcome';
+        let username = '';
+        let age = 0;
+        let balance = 0;
+
+        // DOM Elements
+        const screens = {
+            welcome: document.getElementById('welcomeScreen'),
+            rules: document.getElementById('rulesScreen'),
+            register: document.getElementById('registerScreen'),
+            playing: document.getElementById('playingScreen'),
+            result: document.getElementById('resultScreen'),
+            gameOver: document.getElementById('gameOverScreen')
+        };
+
+        // Show screen function
+        function showScreen(screenName) {
+            Object.keys(screens).forEach(key => {
+                screens[key].classList.remove('active');
+            });
+            screens[screenName].classList.add('active');
+            gameState = screenName;
+        }
+
+        // Secure random number generator (browser equivalent)
+        function secureRandomInt(min, max) {
+            const array = new Uint32Array(1);
+            crypto.getRandomValues(array);
+            return Math.floor(array[0] / (0xFFFFFFFF + 1) * (max - min + 1)) + min;
+        }
+
+        // Event Listeners
+        document.getElementById('showRulesBtn').addEventListener('click', () => showScreen('rules'));
+        document.getElementById('playGameBtn').addEventListener('click', () => showScreen('register'));
+        document.getElementById('backToWelcomeBtn').addEventListener('click', () => showScreen('welcome'));
+        document.getElementById('backToWelcomeFromRegisterBtn').addEventListener('click', () => showScreen('welcome'));
+
+        // Registration
+        document.getElementById('registerBtn').addEventListener('click', () => {
+            const name = document.getElementById('username').value.trim();
+            const userAge = parseInt(document.getElementById('age').value);
+            
+            const messageEl = document.getElementById('registerMessage');
+            
+            if (name.length > 2 && userAge > 17) {
+                username = name;
+                age = userAge;
+                document.getElementById('displayName').textContent = username;
+                showScreen('playing');
+                messageEl.style.display = 'none';
+            } else {
+                messageEl.textContent = '❌ You are not allowed to play (check name or age).';
+                messageEl.className = 'message error';
+                messageEl.style.display = 'block';
+            }
+        });
+
+        // Top-up
+        document.getElementById('topUpBtn').addEventListener('click', () => {
+            const topUpAmount = parseInt(document.getElementById('topUpAmount').value);
+            
+            if (topUpAmount >= 5000) {
+                balance = topUpAmount;
+                document.getElementById('balanceDisplay').textContent = balance.toLocaleString();
+                document.getElementById('topUpSection').style.display = 'none';
+                document.getElementById('betSection').style.display = 'block';
+            } else {
+                alert('❌ You need at least 5000 to start.');
+            }
+        });
+
+        // Play game
+        document.getElementById('playBtn').addEventListener('click', () => {
+            const luckyNumber = parseInt(document.getElementById('luckyNumber').value);
+            const betAmount = parseInt(document.getElementById('betAmount').value);
+            
+            // Validation
+            if (isNaN(luckyNumber) || luckyNumber < 10 || luckyNumber > 99) {
+                alert('Please enter a valid lucky number between 10-99');
+                return;
+            }
+            
+            if (isNaN(betAmount) || betAmount < 1000) {
+                alert('Please enter a valid bet amount (minimum 1000)');
+                return;
+            }
+            
+            if (betAmount > balance) {
+                alert('❌ Not enough balance!');
+                return;
+            }
+            
+            // Process the bet
+            balance -= betAmount;
+            const systemNumber = secureRandomInt(10, 99);
+            
+            // Show result
+            document.getElementById('systemNumberDisplay').textContent = systemNumber.toString().padStart(2, '0');
+            
+            if (luckyNumber === systemNumber) {
+                const winAmount = betAmount * 10;
+                balance += winAmount;
+                document.getElementById('resultMessage').textContent = `🎉 You WIN! 🎉\nYou won $${winAmount.toLocaleString()}!`;
+                document.getElementById('resultMessage').className = 'message success';
+            } else {
+                document.getElementById('resultMessage').textContent = '❌ You lose!';
+                document.getElementById('resultMessage').className = 'message error';
+            }
+            
+            document.getElementById('finalBalanceDisplay').textContent = balance.toLocaleString();
+            document.getElementById('gameOverBalance').textContent = balance.toLocaleString();
+            
+            // Show appropriate buttons based on balance
+            if (balance < 1000) {
+                document.getElementById('resultButtons').style.display = 'none';
+                document.getElementById('insufficientBalanceBtn').style.display = 'block';
+            } else {
+                document.getElementById('resultButtons').style.display = 'flex';
+                document.getElementById('insufficientBalanceBtn').style.display = 'none';
+            }
+            
+            showScreen('result');
+            
+            // Clear inputs
+            document.getElementById('luckyNumber').value = '';
+            document.getElementById('betAmount').value = '';
+        });
+
+        // Result screen buttons
+        document.getElementById('playAgainBtn').addEventListener('click', () => {
+            document.getElementById('balanceDisplay').textContent = balance.toLocaleString();
+            showScreen('playing');
+        });
+        
+        document.getElementById('quitFromResultBtn').addEventListener('click', () => {
+            showScreen('gameOver');
+        });
+        
+        document.getElementById('quitInsufficientBtn').addEventListener('click', () => {
+            showScreen('gameOver');
+        });
+
+        // Quit game from playing screen
+        document.getElementById('quitGameBtn').addEventListener('click', () => {
+            showScreen('gameOver');
+        });
+
+        // Play again from game over
+        document.getElementById('playAgainFromGameOverBtn').addEventListener('click', () => {
+            // Reset game state
+            username = '';
+            age = 0;
+            balance = 0;
+            document.getElementById('username').value = '';
+            document.getElementById('age').value = '';
+            document.getElementById('topUpAmount').value = '';
+            document.getElementById('topUpSection').style.display = 'block';
+            document.getElementById('betSection').style.display = 'none';
+            showScreen('welcome');
+        });
+    </script>
+</body>
+</html>
